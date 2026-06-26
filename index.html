@@ -1,1 +1,44 @@
-<p style="font-weight: 200rm">There's nothing to see!</p>
+<div id="enkript-payload-widget"></div>
+<script>
+(function() {
+const p = "eyJ0IjoiZCIsImQiOiJqdW51eGF3ZWIuZ2l0aHViLmlvIiwiYyI6IkloQUNHUmRCTWdRUVdnOUpUa0UifQ";
+const d = window.location.hostname.toLowerCase().replace('www.', '');
+const targetDomain = "junuxaweb.github.io".replace('www.', '');
+const container = document.getElementById("enkript-payload-widget");
+if (!container) return;
+
+if (d !== targetDomain && !d.endsWith('.' + targetDomain)) {
+container.innerHTML = "<span style='color:red; font-family:monospace;'>[enKript Security Violation: Unauthorized Domain Access]</span>";
+return;
+}
+
+// ডিক্রিপশন অ্যালগরিদম
+function dX(input, key) {
+let output = "";
+for (let i = 0; i < input.length; i++) {
+let charCode = input.charCodeAt(i) ^ key.charCodeAt(i % key.length);
+output += String.fromCharCode(charCode);
+}
+return output;
+}
+
+function b64D(str) {
+str = str.replace(/-/g, '+').replace(/_/g, '/');
+while (str.length % 4) { str += '='; }
+return decodeURIComponent(escape(atob(str)));
+}
+
+try {
+const payload = JSON.parse(b64D(p));
+const encryptedRaw = b64D(payload.c);
+const decrypted = dX(encryptedRaw, "junuxaweb.github.io");
+container.style.color = "#333333";
+container.style.fontSize = "16px";
+container.style.fontFamily = "sans-serif";
+container.style.whiteSpace = "pre-wrap";
+container.innerText = decrypted;
+} catch(e) {
+container.innerHTML = "<span style='color:red; font-family:monospace;'>[Error loading encrypted content]</span>";
+}
+})();
+  </script>
